@@ -1,8 +1,8 @@
 package core.algorithm;
 
+import core.model.Route;
 import core.util.MyUltility;
 import model.Customer;
-import model.Route;
 
 public class TwoOpt {
 	public static void Run(Route route1, Route route2) {
@@ -11,8 +11,8 @@ public class TwoOpt {
 		double minchange;
 		do {
 			minchange = 0.00;
-			for (int i = 1; i < route1.sizeofRoute() - 1; i++) {
-				for (int j = 1; j < route2.sizeofRoute() - 1; j++) {
+			for (int i = 1; i < route1.getListOfDelivery().size() - 1; i++) {
+				for (int j = 1; j < route2.getListOfDelivery().size() - 1; j++) {
 					/*
 					 * edge_ij is distance between i vs j between route 1 & 2
 					 * edge_ij1 is distance between i+1 vs j+1 between route 1 &
