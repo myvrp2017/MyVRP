@@ -1,25 +1,28 @@
 package core.model;
 
+import core.util.MyUltility;
+
 public class Stage {
 	private Location departPoint;
 	private Location destinationPoint;
 	private double startingTime;
 	// after doing the unloading at previous location
-	
+
 	private double arrivingTime;
 	// reaching time to the destination
-	
+
 	private double issuingTime;
 	// time of during issuing when shipping early than the timeWindow
-	
+
 	private double endTime;
 	// issuing Time + service time
-	
+
 	private double distance;
+
 	private double travelTime;
 	// duration from depart location -> destination location only without
 	// service time consideration
-	
+
 	private double distanceFromDepot;
 
 	public Stage(Location departPoint, Location destinationPoint, double startingTime, double arrivingTime,
@@ -35,20 +38,20 @@ public class Stage {
 		this.distanceFromDepot = distanceFromDepot;
 	}
 
-	public Stage(Location departPoint, Location destinationPoint, double startingTime, Delivery del) {
+	public Stage(Location departPoint, Location destinationPoint, double startingTime, Delivery delivery) {
 		this.departPoint = departPoint;
 		this.destinationPoint = destinationPoint;
 		this.startingTime = startingTime;
-		this.distance = norm(departPoint, destinationPoint);
+		this.distance = MyUltility.calculateDistance(departPoint, destinationPoint);
 		this.travelTime = calculateTravelTime(this.distance, 1);
 		this.arrivingTime = this.startingTime + this.travelTime;
 
-		if (this.arrivingTime <= del.getTimewindowFrom())
-			this.issuingTime = del.getTimewindowFrom();
+		if (this.arrivingTime <= delivery.getTimewindowFrom())
+			this.issuingTime = delivery.getTimewindowFrom();
 		else
 			this.issuingTime = this.arrivingTime;
 
-		this.endTime = this.issuingTime + del.getServiceTime();
+		this.endTime = this.issuingTime + delivery.getServiceTime();
 	}
 
 	public Location getDepartPoint() {
@@ -121,12 +124,6 @@ public class Stage {
 
 	public void setDistanceFromDepot(double distanceFromDepot) {
 		this.distanceFromDepot = distanceFromDepot;
-	}
-
-	private double norm(Location a, Location b) {
-		double xDiff = a.getX() - b.getX();
-		double yDiff = a.getY() - b.getY();
-		return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
 	}
 
 	private double calculateTravelTime(double dist, float speed) {

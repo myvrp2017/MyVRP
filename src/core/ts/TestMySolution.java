@@ -1,11 +1,9 @@
 package core.ts;
 
-import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Stroke;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -14,11 +12,12 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
-import core.models.Delivery;
-import core.models.Location;
-import core.models.MyRoute;
-import core.models.Stage;
-import core.models.VrpProblem;
+import core.model.Delivery;
+import core.model.Location;
+import core.model.Route;
+import core.model.Stage;
+import core.model.VrpProblem;
+import core.util.MyUltility;
 
 public class TestMySolution extends JComponent{
 	
@@ -66,27 +65,28 @@ public class TestMySolution extends JComponent{
     {
 		long startTime = System.currentTimeMillis();
         // Initialize our objects
-        VrpProblem vrp = new VrpProblem("solomonBM/c101.txt",0);//1 ignore service time;
+        VrpProblem vrp = new VrpProblem();//1 ignore service time;
+        vrp = MyUltility.readFile("c101.txt",true);
         //Solution initialSolution  = new MySolution( vrp );
-        MySolution init  = new MySolution( vrp ,1,1,1,1,0);
+        MySolution initSolution  = new MySolution( vrp ,1,1,1,1,0);
         long endTime = System.currentTimeMillis();
-        if(checkSolution(init, vrp)){
+        if(checkSolution(initSolution, vrp)){
 	        double totalDistance = 0;
 	        double totalTravelTime = 0;
 	        System.out.println("initialize solution:");
-	        for( int i = 0; i < init.RouteList.size(); i++ ){
+	        for( int i = 0; i < initSolution.RouteList.size(); i++ ){
 	        	System.out.print("Route " + i +" : ");
-	        	for(int j = 0; j < init.RouteList.get(i).getListOfDelivery().size(); j++){
-	        		System.out.print(init.RouteList.get(i).getListOfDelivery().get(j).getIndex()+" - ");
+	        	for(int j = 0; j < initSolution.RouteList.get(i).getListOfDelivery().size(); j++){
+	        		System.out.print(initSolution.RouteList.get(i).getListOfDelivery().get(j).getIndex()+" - ");
 	        	}
-	        	System.out.print(" Total Demand: " + init.RouteList.get(i).getTotalDemand());
-	        	System.out.print(" Total Distance: " + init.RouteList.get(i).getTotalDistance());
-	        	System.out.print(" Total TravelTime: " + init.RouteList.get(i).getTotalTravelTime());
-	        	totalDistance += init.RouteList.get(i).getTotalDistance();
-	        	totalTravelTime += init.RouteList.get(i).getTotalTravelTime();
+	        	System.out.print(" Total Demand: " + initSolution.RouteList.get(i).getTotalDemand());
+	        	System.out.print(" Total Distance: " + initSolution.RouteList.get(i).getTotalDistance());
+	        	System.out.print(" Total TravelTime: " + initSolution.RouteList.get(i).getTotalTravelTime());
+	        	totalDistance += initSolution.RouteList.get(i).getTotalDistance();
+	        	totalTravelTime += initSolution.RouteList.get(i).getTotalTravelTime();
 	        	System.out.println("");
 	        }
-	        System.out.println("Total Route :"+init.RouteList.size());
+	        System.out.println("Total Route :"+initSolution.RouteList.size());
 	        System.out.println("Total TravelTime: " + totalTravelTime);
 	        System.out.println("Total Distance: " + totalDistance);
 	        System.out.println("Execute Time: "+(endTime - startTime));
@@ -97,16 +97,16 @@ public class TestMySolution extends JComponent{
 	        comp.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 	        testFrame.getContentPane().add(comp, BorderLayout.CENTER);
 	        
-	        for(int i = 0; i < init.RouteList.size(); i++){
+	        for(int i = 0; i < initSolution.RouteList.size(); i++){
 	        	Color randomColor = new Color((float)Math.random(), (float)Math.random(), (float)Math.random());
-	        	for(int j = 0; j < init.RouteList.get(i).getListOfDelivery().size()-2; j++){
-	        		Location cus1 = vrp.getLocationCustomer()[init.RouteList.get(i).getListOfDelivery().get(j).getIndex()];
-	        		Location cus2 = vrp.getLocationCustomer()[init.RouteList.get(i).getListOfDelivery().get(j+1).getIndex()];
+	        	for(int j = 0; j < initSolution.RouteList.get(i).getListOfDelivery().size()-2; j++){
+	        		Location cus1 = vrp.getLocationOfCustomers().get(initSolution.RouteList.get(i).getListOfDelivery().get(j).getIndex());
+	        		Location cus2 = vrp.getLocationOfCustomers().get(initSolution.RouteList.get(i).getListOfDelivery().get(j+1).getIndex());
 	                int x1 = (int) cus1.getX()*7 +100;
 	                int x2 = (int) cus2.getX()*7 +100;
 	                int y1 = (int) cus1.getY()*7 +100;
 	                int y2 = (int) cus2.getY()*7 +100;
-	                comp.addLine(x1, y1, x2, y2,init.RouteList.get(i).getListOfDelivery().get(j).getIndex(),init.RouteList.get(i).getListOfDelivery().get(j+1).getIndex(), randomColor);
+	                comp.addLine(x1, y1, x2, y2,initSolution.RouteList.get(i).getListOfDelivery().get(j).getIndex(),initSolution.RouteList.get(i).getListOfDelivery().get(j+1).getIndex(), randomColor);
 	            }
 	        }
 	

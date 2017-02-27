@@ -1,8 +1,9 @@
 package core.ts;
 
-import org.coinor.opents.*;
+import org.coinor.opents.Move;
+import org.coinor.opents.Solution;
 
-import core.models.MyRoute;
+import core.model.Route;
 
 public class MySwapMove implements Move 
 {
@@ -31,14 +32,14 @@ public class MySwapMove implements Move
 		this.updateRouteA = updateRouteA;
 		this.updateRouteB = updateRouteB;
 	}
-	public void operateOn( SolutionTwoopt solution )
+	public void operateOn( Solution solution )
     {
         MySolution soln = (MySolution) solution;
         soln.RouteList.remove(indexA);
         soln.RouteList.add(indexA,updateRouteA);
         soln.RouteList.remove(indexB);
         soln.RouteList.add(indexB,updateRouteB);
-        soln.calculateDistance();
+        soln.calculateDistanceAndTravelTime();
     }   // end operateOn
     
     

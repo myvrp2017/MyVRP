@@ -7,7 +7,7 @@ public class Delivery {
 	private int timewindowFrom;
 	private int timewindowTo;
 	private int serviceTime;
-	private int index;
+	private int id;
 	private Location locationOfDepot;
 	private Location locationOfCustomer;
 
@@ -27,13 +27,13 @@ public class Delivery {
 		this.locationOfCustomer = locationOfCus;
 	}
 
-	public Delivery(double demand, int timewindowFrom, int timewindowTo, int serviceTime, int index,
+	public Delivery(int id,double demand, int timewindowFrom, int timewindowTo, int serviceTime,
 			Location locationOfDepot, Location locationOfCustomer) {
 		this.demand = demand;
 		this.timewindowFrom = timewindowFrom;
 		this.timewindowTo = timewindowTo;
 		this.serviceTime = serviceTime;
-		this.index = index;
+		this.id = id;
 		this.locationOfDepot = locationOfDepot;
 		this.locationOfCustomer = locationOfCustomer;
 	}
@@ -71,11 +71,11 @@ public class Delivery {
 	}
 
 	public int getIndex() {
-		return index;
+		return id;
 	}
 
 	public void setIndex(int index) {
-		this.index = index;
+		this.id = index;
 	}
 
 	/*

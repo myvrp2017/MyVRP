@@ -5,11 +5,11 @@ import java.util.Random;
 
 import org.coinor.opents.*;
 
-import core.models.Delivery;
-import core.models.Location;
-import core.models.MyRoute;
-import core.models.Stage;
-import core.models.VrpProblem;
+import core.model.Delivery;
+import core.model.Location;
+import core.model.Route;
+import core.model.Stage;
+import core.model.VrpProblem;
 
 
 public class MyMoveManager implements MoveManager
@@ -19,7 +19,7 @@ public class MyMoveManager implements MoveManager
     public MyMoveManager(VrpProblem vrp){
     	this.vrp = vrp;
     }
-    public Move[] getAllMoves( SolutionTwoopt solution )
+    public Move[] getAllMoves( MySolution solution )
     {   
     	ArrayList<Move> listMove = doGetAllMoves((MySolution)solution);
     	Move[] moves = new Move[listMove.size()];
@@ -62,8 +62,8 @@ public class MyMoveManager implements MoveManager
 		ArrayList listCandidate = new ArrayList<>();
 		for(int i = 1; i < rA.getListOfDelivery().size()-1; i++){
 			for(int j = 0; j < rB.getListOfStage().size(); j++){
-				Route updateRouteA = new Route(rA);
-				Route updateRouteB = new Route(rB);
+				Route updateRouteA = rA.clone();
+				Route updateRouteB = rB.clone();
 				Stage tmpStage = rB.getListOfStage().get(j);
 				ArrayList tmp = new ArrayList<>();
 				if(Feasible(rA,rB,updateRouteA,updateRouteB,tmpStage,j,i)){
@@ -81,14 +81,14 @@ public class MyMoveManager implements MoveManager
 			int positionOfStage,int positionOfRA) {
 		Delivery del_u = rA.getListOfDelivery().get(positionOfRA);
 		Delivery del_j = rB.getListOfDelivery().get(positionOfStage+1);
-		Route saveRouteB = new Route(rB);
-		Route saveRouteA = new Route(rA);
+		Route saveRouteB = rB.clone();
+		Route saveRouteA = rA.clone();
 		
 		if((rB.getTotalDemand() + del_u.getDemand()) > this.vrp.getCapacityOfVehicle())
 			return false;
 		//insert u into ij
 		//check constraint time
-		double dist_iu = norm(tmpStage.getDepartPoint(),this.vrp.getLocationCustomer()[del_u.getIndex()]);
+		double dist_iu = norm(tmpStage.getDepartPoint(),this.vrp.getLocationOfCustomers().get(del_u.getIndex()));
 		double trlTime_iu = calculateTrlTime(dist_iu, this.speed);
 		double arrTime_iu = trlTime_iu + tmpStage.getStartingTime();
 		if(arrTime_iu > del_u.getTimewindowTo())
@@ -99,7 +99,7 @@ public class MyMoveManager implements MoveManager
 		else
 			issuingTime_iu = arrTime_iu;
 		
-		double dist_uj = norm(this.vrp.getLocationCustomer()[del_u.getIndex()],tmpStage.getDestinationPoint());
+		double dist_uj = norm(this.vrp.getLocationOfCustomers().get(del_u.getIndex()),tmpStage.getDestinationPoint());
 		double trlTime_uj = calculateTrlTime(dist_uj, this.speed);
 		double arrTime_uj = trlTime_uj + issuingTime_iu + del_u.getServiceTime();
 		if(arrTime_uj > del_j.getTimewindowTo())
@@ -110,10 +110,10 @@ public class MyMoveManager implements MoveManager
 		else
 			issuingTime_uj = arrTime_uj;
 		
-		Stage s_iu = new Stage(tmpStage.getDepartPoint(), this.vrp.getLocationCustomer()[del_u.getIndex()], 
+		Stage s_iu = new Stage(tmpStage.getDepartPoint(), this.vrp.getLocationOfCustomers().get(del_u.getIndex()), 
 				tmpStage.getStartingTime(), arrTime_iu, issuingTime_iu, issuingTime_iu+del_u.getServiceTime(),
 				dist_iu, trlTime_iu, tmpStage.getDistanceFromDepot() + dist_iu);
-		Stage s_uj = new Stage(this.vrp.getLocationCustomer()[del_u.getIndex()],tmpStage.getDestinationPoint() , 
+		Stage s_uj = new Stage(this.vrp.getLocationOfCustomers().get(del_u.getIndex()),tmpStage.getDestinationPoint() , 
 				issuingTime_iu + del_u.getServiceTime(), arrTime_uj, issuingTime_uj, issuingTime_uj+del_j.getServiceTime(),
 				dist_uj, trlTime_uj, tmpStage.getDistanceFromDepot() + dist_iu + dist_uj);
 		//calculate time after insert u
@@ -196,6 +196,11 @@ public class MyMoveManager implements MoveManager
 
 	public void setVrp(VrpProblem vrp) {
 		this.vrp = vrp;
+	}
+	@Override
+	public Move[] getAllMoves(Solution arg0) {
+		// TODO Auto-generated method stub
+		return null;
 	}
     
 }   // end class MyMoveManager

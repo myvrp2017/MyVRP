@@ -5,29 +5,38 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import core.model.Delivery;
 import core.model.Location;
 import core.model.VrpProblem;
-import model.Customer;
 
 public class MyUltility {
 	
-	public static VrpProblem readFile(String fileName) throws FileNotFoundException {
-		File file = new File("data/"+fileName);
-		ArrayList<Location> locations = new ArrayList<>();
+	/*
+	 * read file Benmarking Solomon for VRP 
+	 */
+	public static VrpProblem readFile(String fileName, boolean ignoreServiceTime) throws FileNotFoundException {
 		VrpProblem vrp = null;
-		
+		File file = new File("data/" + fileName);
+
 		int numOfVehicle = 0;
-		int capacity = 0 ;
+		double capacity = 0;
+		double maxRouteTime = 0;
+
+		ArrayList<Location> locationOfCustomers = new ArrayList<>();
+		ArrayList<Delivery> deliveryList = new ArrayList<>();
+
+		Location locationOfDepot = new Location();
 		Scanner scanner = new Scanner(file);
 		try {
-			int numLine=1;
-			while(scanner.hasNextLine()){
+			int numLine = 1;
+			while (scanner.hasNextLine()) {
+				@SuppressWarnings("resource")
 				Scanner line = new Scanner(scanner.nextLine());
-				if(numLine == 5){
+				if (numLine == 5) {
 					numOfVehicle = line.nextInt();
 					capacity = line.nextInt();
-					
-				}else if(numLine > 9){
+
+				} else if (numLine > 9) {
 					int id = line.nextInt();
 					double x = line.nextDouble();
 					double y = line.nextDouble();
@@ -35,39 +44,59 @@ public class MyUltility {
 					int timeFrom = line.nextInt();
 					int timeTo = line.nextInt();
 					int serviceTime = line.nextInt(); // nodeTime
-					
-					Location location = new Location(id ,x ,y, timeFrom, timeTo, serviceTime, demand); // id = 0 (depot)
-					locations.add(location);
+
+					Location location = new Location(x, y);
+
+					locationOfCustomers.add(location);
+
+					// id = 0 (depot)
+					if (id == 0) {
+						locationOfDepot = new Location(x, y);
+						maxRouteTime = timeTo;
+					}
+					if (ignoreServiceTime) {
+						serviceTime = 0;
+					}
+					Delivery delivery = new Delivery(id, demand, timeFrom, timeTo, serviceTime, locationOfDepot,
+							location);
+					deliveryList.add(delivery);
 				}
 				numLine++;
 			}
-		}finally{
+		} finally {
 			scanner.close();
-			MyUltility.calculateDistanceMatrix(locations);
-			vrp = new VrpProblem(fileName, numOfVehicle, capacity,locations);
 			
-			vrp.setMAX_ROUTE_TIME(locations.get(0).getTimeTo());
+			MyUltility.calculateDistanceMatrix(locationOfCustomers);
+			locationOfDepot.setDistanceMatrix(locationOfCustomers.get(0).getDistanceMatrix());
+			vrp = new VrpProblem(fileName, numOfVehicle, capacity, maxRouteTime, locationOfDepot, locationOfCustomers,
+					deliveryList);
 		}
 		return vrp;
 	}
-	
-	public static void calculateDistanceMatrix(ArrayList<Customer> locations) {
+
+	/*
+	 * calculate Distance Matrix of each location
+	 */
+	public static void calculateDistanceMatrix(ArrayList<Location> locations) {
 		ArrayList<Double> distanceMatrix = null;
-		for (Customer location1 : locations) {
+		for (Location location1 : locations) {
 			distanceMatrix = new ArrayList<Double>();
-			for (Customer location2 : locations) {
-				double distance = MyUltility.getDistance(location1, location2);
+			for (Location location2 : locations) {
+				double distance = MyUltility.calculateDistance(location1, location2);
 				distanceMatrix.add(distance);
 			}
 			location1.setDistanceMatrix(distanceMatrix);
 		}
 	}
-
-	public static double getDistance(Customer l1, Customer l2) {
-		double x12 = l1.getX() - l2.getX();
-		double y12 = l1.getY() - l2.getY();
-		return round(Math.sqrt(x12 * x12 + y12 * y12) , 2);
+	/*
+	 * return distance betweeb location 1  && location 2
+	 */
+	public static double calculateDistance(Location location1, Location location2) {
+		double x12 = location1.getX() - location2.getX();
+		double y12 = location1.getY() - location2.getY();
+		return round(Math.sqrt(x12 * x12 + y12 * y12), 2);
 	}
+
 	public static double round(double value, int places) {
 		if (places < 0)
 			throw new IllegalArgumentException();

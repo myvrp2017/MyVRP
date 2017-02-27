@@ -19,12 +19,12 @@ public class TwoOpt {
 					 * 2 edge_ii is distance between i vs i+1 of route1 edge_jj
 					 * is distance between j vs j+1 of route2
 					 */
-					double edge_ij = MyUltility.getDistance(route1.getCustomers().get(i), route2.getCustomers().get(j));
-					double edge_ij1 = MyUltility.getDistance(route1.getCustomers().get(i + 1),
+					double edge_ij = MyUltility.calculateDistance(route1.getCustomers().get(i), route2.getCustomers().get(j));
+					double edge_ij1 = MyUltility.calculateDistance(route1.getCustomers().get(i + 1),
 							route2.getCustomers().get(j + 1));
-					double edge_ii = MyUltility.getDistance(route1.getCustomers().get(i),
+					double edge_ii = MyUltility.calculateDistance(route1.getCustomers().get(i),
 							route1.getCustomers().get(i + 1));
-					double edge_jj = MyUltility.getDistance(route2.getCustomers().get(j),
+					double edge_jj = MyUltility.calculateDistance(route2.getCustomers().get(j),
 							route2.getCustomers().get(j + 1));
 
 					double change = edge_ij + edge_ij1 - edge_ii - edge_jj;

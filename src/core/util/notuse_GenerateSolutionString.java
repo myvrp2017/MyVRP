@@ -2,18 +2,12 @@ package core.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import model.FeasibleSolution;
-import model.Customer;
-import model.Route;
-import model.Solution;
-import model.VrpProblem;
-
-public class GenerateSolutionString {
+public class notuse_GenerateSolutionString {
 	
+	@SuppressWarnings("unused")
 	private static String getArrivalTime(int arrivalTime) throws ParseException{
 		 String myTime = "08:00";
 		 SimpleDateFormat df = new SimpleDateFormat("HH:mm");
@@ -26,7 +20,7 @@ public class GenerateSolutionString {
 		 return newTime;
 	}
 
-	public static String toString(String string, SolutionTwoopt bestsolution, ArrayList<Customer> customers) throws ParseException {
+	/*public static String toString(String string, SolutionTwoopt bestsolution, ArrayList<Customer> customers) throws ParseException {
 		
 		FeasibleSolution solutionObject = bestsolution.getFeasibleSolution();
 		 
@@ -55,6 +49,6 @@ public class GenerateSolutionString {
 		}
 		
 		return solution;
-	}
+	}*/
 
 }

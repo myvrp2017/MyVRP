@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Location {
 	
 	private double x,y;
+	
 	/*
 	 * distanceMatrix is an array contains distance between this Location and the other
 	 */

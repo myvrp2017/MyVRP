@@ -1,8 +1,10 @@
 package core.ts;
 
-import org.coinor.opents.*;
+import org.coinor.opents.Move;
+import org.coinor.opents.ObjectiveFunction;
+import org.coinor.opents.Solution;
 
-import core.models.VrpProblem;
+import core.model.VrpProblem;
 
 
 public class MyObjectiveFunction implements ObjectiveFunction
@@ -15,7 +17,7 @@ public class MyObjectiveFunction implements ObjectiveFunction
     	this.vrp = vrp;
     }
     
-    public double[] evaluate( SolutionTwoopt solution, Move move )
+    public double[] evaluate( MySolution solution, Move move )
     {
         MySolution soln = (MySolution) solution;
         
@@ -36,10 +38,16 @@ public class MyObjectiveFunction implements ObjectiveFunction
         	tmp.RouteList.remove(mv.indexB);
         	tmp.RouteList.add(mv.indexB,mv.updateRouteB);
         	
-        	tmp.calculateDistance();
+        	tmp.calculateDistanceAndTravelTime();
         	return new double[]{tmp.totalDistance};
         }   // end else: calculate incremental
     }   // end evaluate
+
+	@Override
+	public double[] evaluate(Solution arg0, Move arg1) {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
     
 }   // end class MyObjectiveFunction

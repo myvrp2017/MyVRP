@@ -1,14 +1,8 @@
 package core.util;
-import java.util.ArrayList;
 
-import model.Customer;
-import model.FeasibleSolution;
-import model.Route;
-import model.VrpProblem;
-
-public class SolutionGenerator {
+public class notuse_SolutionGenerator {
 	
-	public static FeasibleSolution genereateSolution(VrpProblem vrpProblem,ArrayList<Customer> customers) {
+	/*public static FeasibleSolution genereateSolution(VrpProblem vrpProblem,ArrayList<Customer> customers) {
 		FeasibleSolution solution = new FeasibleSolution();
 
 		
@@ -119,6 +113,6 @@ public class SolutionGenerator {
 		
 		return fitness;
 		
-	}
+	}*/
 
 }

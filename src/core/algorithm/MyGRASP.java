@@ -6,11 +6,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
 
-import model.Customer;
-import model.Solution;
-import model.VrpProblem;
-import util.GenerateSolutionString;
-import util.SolutionGenerator;
+import core.model.Location;
+import core.model.VrpProblem;
+import core.ts.MySolution;
+import core.util.notuse_GenerateSolutionString;
+import core.util.notuse_SolutionGenerator;
 
 /**
  * 
@@ -28,11 +28,11 @@ public class MyGRASP {
 
 	// properties
 	VrpProblem vrpProblem;
-	private ArrayList<Customer> customers;
+	private ArrayList<Location> customers;
 	private double maxRouteTime;
 
 	// solution
-	private SolutionTwoopt bestSolution;
+	private MySolution bestSolution;
 
 	/*
 	 * alpha is the size of RCL. threshold is the value of fitness when evaluate
@@ -57,13 +57,13 @@ public class MyGRASP {
 	public MyGRASP(VrpProblem vrpProblem, double threshold, int alpha, double betaValue, int maxIterations) {
 		super();
 		this.vrpProblem = vrpProblem;
-		this.customers = (ArrayList<Customer>) vrpProblem.getCustomers().clone();
+		this.customers = (ArrayList<Location>) vrpProblem.getLocations().clone();
 		this.maxRouteTime = vrpProblem.getMAX_ROUTE_TIME();
 
 		this.threshold = threshold;
 		this.betaValue = betaValue;
 		this.maxIterations = maxIterations;
-		this.bestSolution = new SolutionTwoopt();
+		this.bestSolution = new MySolution();
 
 		doGRASP();
 
@@ -71,12 +71,12 @@ public class MyGRASP {
 
 	// main method
 	private void doGRASP() {
-		ArrayList<Customer> customersNotUsed = (ArrayList<Customer>) customers.clone();
+		ArrayList<Location> customersNotUsed = (ArrayList<Location>) customers.clone();
 		
 		/*
 		 * remove depot and shuffle list if customerNotUsed
 		 */
-		ArrayList<Customer> customerToVisit = (ArrayList<Customer>) customersNotUsed.clone();
+		ArrayList<Location> customerToVisit = (ArrayList<Location>) customersNotUsed.clone();
 		
 		customerToVisit.remove(0);
 		Collections.shuffle(customerToVisit);
@@ -85,21 +85,21 @@ public class MyGRASP {
 		/*
 		 * remove customer in customerNotUesd if it in customerToVisit
 		 */
-		for (Customer customer : customerToVisit) {
+		for (Location customer : customerToVisit) {
 			customersNotUsed.remove(customer);
 		}
 
-		for (Customer customer : customerToVisit) {
+		for (Location customer : customerToVisit) {
 			customersNotUsed.add(customer);
 		}
-		SolutionTwoopt bestSolution = new SolutionTwoopt();
+		MySolution bestSolution = new MySolution();
 		bestSolution.setFitness(0.00);
 		
-		bestSolution.setFeasibleSolution(SolutionGenerator.genereateSolution(vrpProblem,customersNotUsed));
+		bestSolution.setFeasibleSolution(notuse_SolutionGenerator.genereateSolution(vrpProblem,customersNotUsed));
 		int counter = 0;
 		while (counter < this.maxIterations && bestSolution.getFitness() < threshold) {
 			System.out.println("loop "+counter);
-			SolutionTwoopt candidate = new SolutionTwoopt();
+			MySolution candidate = new MySolution();
 			candidate = GRC();
 			/*
 			if(candidate.getFitness() < threshold){
@@ -117,7 +117,7 @@ public class MyGRASP {
 				
 				System.out.println("candidate vs best : " + candidate.getCost() + " vs " + bestSolution.getCost() );
 				bestSolution = candidate;
-				bestSolution.setFitness(SolutionGenerator.calculateFitness(vrpProblem,
+				bestSolution.setFitness(notuse_SolutionGenerator.calculateFitness(vrpProblem,
 						bestSolution.getFeasibleSolution(), customers.size()));
 			}
 			counter++;
@@ -129,62 +129,62 @@ public class MyGRASP {
 
 	// Greedy Randomized Construction
 	// GRC polcity 1 : choose a random RCL and choose the best element in this
-	private SolutionTwoopt GRC() {
+	private MySolution GRC() {
 
-		SolutionTwoopt candidateSolution = new SolutionTwoopt();
+		MySolution candidateSolution = new MySolution();
 
-		Customer initialNode = customers.get(0); // depot
-		candidateSolution.getCustomerInSolution().add(initialNode);
+		Location initialNode = customers.get(0); // depot
+		candidateSolution.getLocationInSolution().add(initialNode);
 
-		ArrayList<Customer> notVisitedCustomers = (ArrayList<Customer>) this.customers.clone();
+		ArrayList<Location> notVisitedLocations = (ArrayList<Location>) this.customers.clone();
 
 		/*
-		 * visitedCustomers contain ID of customer that visited
+		 * visitedLocations contain ID of customer that visited
 		 */
-		ArrayList<Integer> visitedCustomers = new ArrayList<Integer>();
+		ArrayList<Integer> visitedLocations = new ArrayList<Integer>();
 
-		notVisitedCustomers.remove(0);
-		visitedCustomers.add(0);
+		notVisitedLocations.remove(0);
+		visitedLocations.add(0);
 
 		boolean done = false;
 
 		while (!done) {
 			// init list of feature cost
-			HashMap<Integer, Double> featureCost = generateFeatureCost(notVisitedCustomers, visitedCustomers,
+			HashMap<Integer, Double> featureCost = generateFeatureCost(notVisitedLocations, visitedLocations,
 					candidateSolution);
 			// find min vs max cost in featureCost
 			double minCost = findMin(featureCost);
 			double maxCost = findMax(featureCost);
 
 			// init random RCL
-			ArrayList<Customer> RCL = (ArrayList<Customer>) notVisitedCustomers.clone();
+			ArrayList<Location> RCL = (ArrayList<Location>) notVisitedLocations.clone();
 			Collections.shuffle(RCL);
 
-			if (!notVisitedCustomers.isEmpty() && !RCL.isEmpty()) {
-				Customer choosenCustomer = new Customer();
+			if (!notVisitedLocations.isEmpty() && !RCL.isEmpty()) {
+				Location choosenLocation = new Location();
 				int keyMin = findMinKey(featureCost);
-				for (Customer customer : RCL) {
+				for (Location customer : RCL) {
 					if (customer.getId() == keyMin) {
-						choosenCustomer = customer;
+						choosenLocation = customer;
 					}
 				}
 
-				candidateSolution.getCustomerInSolution().add(choosenCustomer);
+				candidateSolution.getLocationInSolution().add(choosenLocation);
 
-				// update visitedCustomers and notVisitedCustomers
-				visitedCustomers.add(choosenCustomer.getId());
-				notVisitedCustomers.remove(choosenCustomer);
+				// update visitedLocations and notVisitedLocations
+				visitedLocations.add(choosenLocation.getId());
+				notVisitedLocations.remove(choosenLocation);
 
 			}
-			if (notVisitedCustomers.isEmpty()) {
-				ArrayList<Customer> routeToEvaluate = new ArrayList<>();
+			if (notVisitedLocations.isEmpty()) {
+				ArrayList<Location> routeToEvaluate = new ArrayList<>();
 
-				for (Customer customer : candidateSolution.getCustomerInSolution()) {
+				for (Location customer : candidateSolution.getLocationInSolution()) {
 					routeToEvaluate.add(customer);
 				}
 
 				candidateSolution.setFeasibleSolution(
-						util.SolutionGenerator.genereateSolution(this.vrpProblem, routeToEvaluate));
+						util.notuse_SolutionGenerator.genereateSolution(this.vrpProblem, routeToEvaluate));
 				done = true;
 			}
 
@@ -198,16 +198,16 @@ public class MyGRASP {
 	}
 
 	// Local Search Method
-	private SolutionTwoopt localSearch(SolutionTwoopt candidate) {
-		SolutionTwoopt bestLocal = new SolutionTwoopt();
+	private MySolution localSearch(MySolution candidate) {
+		MySolution bestLocal = new MySolution();
 
 		int counter = 0;
 
 		while (counter < maxIterations) {
-			SolutionTwoopt solution = new SolutionTwoopt();
+			MySolution solution = new MySolution();
 
-			ArrayList<Customer> customerInCandidate = new ArrayList<>();
-			customerInCandidate.addAll(candidate.getFeasibleSolution().getAllCustomers());
+			ArrayList<Location> customerInCandidate = new ArrayList<>();
+			customerInCandidate.addAll(candidate.getFeasibleSolution().getAllLocations());
 
 			Random r = new Random();
 			int r1 = r.nextInt(customerInCandidate.size());
@@ -217,7 +217,7 @@ public class MyGRASP {
 
 			customerInCandidate.add(0, customers.get(0));
 
-			solution.setFeasibleSolution(SolutionGenerator.genereateSolution(vrpProblem, customerInCandidate));
+			solution.setFeasibleSolution(notuse_SolutionGenerator.genereateSolution(vrpProblem, customerInCandidate));
 			solution.setCost(calculateCost(solution));
 
 			if (solution.getCost() < bestLocal.getCost()) {
@@ -236,22 +236,22 @@ public class MyGRASP {
 
 	/**
 	 * 
-	 * @param notVisitedCustomers
-	 * @param visitedCustomers
+	 * @param notVisitedLocations
+	 * @param visitedLocations
 	 * @param candidateSolution
 	 * @return hash-map each key-value contains cost when adding customer[key]
 	 *         to candidateSolution
 	 */
-	private HashMap<Integer, Double> generateFeatureCost(ArrayList<Customer> notVisitedCustomers,
-			ArrayList<Integer> visitedCustomers, SolutionTwoopt candidateSolution) {
+	private HashMap<Integer, Double> generateFeatureCost(ArrayList<Location> notVisitedLocations,
+			ArrayList<Integer> visitedLocations, MySolution candidateSolution) {
 
 		HashMap<Integer, Double> featureCost = new HashMap<>();
 
-		for (Customer customer : notVisitedCustomers) {
-			if (visitedCustomers.contains(customer.getId())) {
+		for (Location customer : notVisitedLocations) {
+			if (visitedLocations.contains(customer.getId())) {
 				continue;
 			} else {
-				double cost = costCustomerToSolution(candidateSolution, customer);
+				double cost = costLocationToSolution(candidateSolution, customer);
 				featureCost.put(customer.getId(), cost);
 			}
 		}
@@ -290,15 +290,15 @@ public class MyGRASP {
 		return minCost;
 	}
 
-	private ArrayList<Integer> addCustomers(SolutionTwoopt candidate) {
+	private ArrayList<Integer> addLocations(MySolution candidate) {
 
-		ArrayList<Integer> usedCustomers = new ArrayList<>();
+		ArrayList<Integer> usedLocations = new ArrayList<>();
 
-		for (Customer customer : candidate.getCustomerInSolution()) {
-			usedCustomers.add(customer.getId());
+		for (Location customer : candidate.getLocationInSolution()) {
+			usedLocations.add(customer.getId());
 		}
 
-		return usedCustomers;
+		return usedLocations;
 	}
 
 	/**
@@ -307,11 +307,11 @@ public class MyGRASP {
 	 * @return locations after remove location has index 0 ( depot ) and shuffle
 	 *         the other locations
 	 */
-	private ArrayList<Customer> getCustomersToVisit(ArrayList<Customer> customersNotUsed) {
+	private ArrayList<Location> getLocationsToVisit(ArrayList<Location> customersNotUsed) {
 	
-		ArrayList<Customer> customers = new ArrayList<>();
+		ArrayList<Location> customers = new ArrayList<>();
 	
-		for (Customer customer : customersNotUsed) {
+		for (Location customer : customersNotUsed) {
 	
 			if (customer.getId() == 0) {
 				continue;
@@ -326,7 +326,7 @@ public class MyGRASP {
 		return customers;
 	}
 
-	private int calculateCost(SolutionTwoopt candidate) {
+	private int calculateCost(MySolution candidate) {
 		int cost = 0;
 
 		/* cost of 1000 for every car */
@@ -337,9 +337,9 @@ public class MyGRASP {
 		return cost;
 	}
 
-	private double costCustomerToSolution(SolutionTwoopt candidate, Customer customer) {
-		double travelTimeBetweenNodes = candidate.getCustomerInSolution()
-				.get(candidate.getCustomerInSolution().size() - 1).getDistanceMatrix().get(customer.getId());
+	private double costLocationToSolution(MySolution candidate, Location customer) {
+		double travelTimeBetweenNodes = candidate.getLocationInSolution()
+				.get(candidate.getLocationInSolution().size() - 1).getDistanceMatrix().get(customer.getId());
 		double nodeCost = travelTimeBetweenNodes + customer.getServiceTime();
 
 		return nodeCost;
@@ -375,12 +375,12 @@ public class MyGRASP {
 	}
 
 	// in list of customer the id vs index as the same
-	private ArrayList<Integer> randomAlphaElemen(int numofCustomer, int alpha) {
+	private ArrayList<Integer> randomAlphaElemen(int numofLocation, int alpha) {
 
 		ArrayList<Integer> randoms = new ArrayList<Integer>();
 		Random random = new Random();
 		while (randoms.size() < alpha) {
-			int index = random.nextInt(numofCustomer);
+			int index = random.nextInt(numofLocation);
 			if (randoms.contains(index)) {
 				continue;
 			} else {
@@ -394,7 +394,7 @@ public class MyGRASP {
 	public String toString() {
 
 		try {
-			return GenerateSolutionString.toString("GRASP", bestSolution, customers);
+			return notuse_GenerateSolutionString.toString("GRASP", bestSolution, customers);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -402,7 +402,7 @@ public class MyGRASP {
 		return "Solution not working";
 
 	}
-	public SolutionTwoopt getBestSolution() {
+	public MySolution getBestSolution() {
 		return bestSolution;
 	}
 
