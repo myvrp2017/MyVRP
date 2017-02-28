@@ -126,7 +126,7 @@ public class MySolution extends SolutionAdapter {
 				continue;
 			break;
 		}
-		System.out.println("i la :" + i);
+		//System.out.println("i la :" + i);
 		// depot -> A -> depot
 		Stage s_OA = new Stage(vrp.getDepot(), listD.get(i).getLocationOfCus(), 0, arrTime, issuingTime, endTime,
 				distanceMatrix.get(listD.get(i).getIndex()), trlTime, distanceMatrix.get(listD.get(i).getIndex()));
@@ -173,12 +173,12 @@ public class MySolution extends SolutionAdapter {
 			tmp = p.get(0);
 			uStar = tmp.getuStar();
 			rseed.setAttribute(tmp.getUpdateRoute());
-			System.out.println(rseed);
+			//System.out.println(rseed);
 		}
 		return uStar;
 	}
 
-	private boolean isFeasible(Route tmpRoute, Stage tmpStage, int positionOfCus, VrpProblem vrp, int positionInStage,
+	public boolean isFeasible(Route tmpRoute, Stage tmpStage, int positionOfCus, VrpProblem vrp, int positionInStage,
 			Route currentRoute) {
 		Delivery del_u = vrp.getDeliveryList().get(positionOfCus);
 		Delivery del_j = currentRoute.getListOfDelivery().get(positionInStage + 1);
