@@ -6,7 +6,7 @@ import core.model.Delivery;
 import core.model.Location;
 import core.model.Route;
 import core.model.VrpProblem;
-import core.util.MyUltility;
+import core.util.MyUtility;
 
 public class MyImproving {
 	public static void twoOpt(Route route1, Route route2, VrpProblem vrpProblem) {
@@ -25,14 +25,14 @@ public class MyImproving {
 					 * 2 edge_ii is distance between i vs i+1 of route1 edge_jj
 					 * is distance between j vs j+1 of route2
 					 */
-					double edge_ij = MyUltility.calculateDistance(route1.getListOfDelivery().get(i).getLocationOfCus(),
+					double edge_ij = MyUtility.calculateDistance(route1.getListOfDelivery().get(i).getLocationOfCus(),
 							route2.getListOfDelivery().get(j).getLocationOfCus());
-					double edge_ij1 = MyUltility.calculateDistance(
+					double edge_ij1 = MyUtility.calculateDistance(
 							route1.getListOfDelivery().get(i + 1).getLocationOfCus(),
 							route2.getListOfDelivery().get(j + 1).getLocationOfCus());
-					double edge_ii = MyUltility.calculateDistance(route1.getListOfDelivery().get(i).getLocationOfCus(),
+					double edge_ii = MyUtility.calculateDistance(route1.getListOfDelivery().get(i).getLocationOfCus(),
 							route1.getListOfDelivery().get(i + 1).getLocationOfCus());
-					double edge_jj = MyUltility.calculateDistance(route2.getListOfDelivery().get(j).getLocationOfCus(),
+					double edge_jj = MyUtility.calculateDistance(route2.getListOfDelivery().get(j).getLocationOfCus(),
 							route2.getListOfDelivery().get(j + 1).getLocationOfCus());
 
 					double change = edge_ij + edge_ij1 - edge_ii - edge_jj;

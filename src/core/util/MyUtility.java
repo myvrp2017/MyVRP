@@ -9,7 +9,7 @@ import core.model.Delivery;
 import core.model.Location;
 import core.model.VrpProblem;
 
-public class MyUltility {
+public class MyUtility {
 	
 	/*
 	 * read file Benmarking Solomon for VRP 
@@ -66,7 +66,7 @@ public class MyUltility {
 		} finally {
 			scanner.close();
 			
-			MyUltility.calculateDistanceMatrix(locationOfCustomers);
+			MyUtility.calculateDistanceMatrix(locationOfCustomers);
 			locationOfDepot.setDistanceMatrix(locationOfCustomers.get(0).getDistanceMatrix());
 			vrp = new VrpProblem(fileName, numOfVehicle, capacity, maxRouteTime, locationOfDepot, locationOfCustomers,
 					deliveryList);
@@ -82,7 +82,7 @@ public class MyUltility {
 		for (Location location1 : locations) {
 			distanceMatrix = new ArrayList<Double>();
 			for (Location location2 : locations) {
-				double distance = MyUltility.calculateDistance(location1, location2);
+				double distance = MyUtility.calculateDistance(location1, location2);
 				distanceMatrix.add(distance);
 			}
 			location1.setDistanceMatrix(distanceMatrix);
@@ -105,5 +105,8 @@ public class MyUltility {
 		value = value * factor;
 		long tmp = Math.round(value);
 		return (double) tmp / factor;
+	}
+	public static double calculateTravelTime(double dist, float speed) {
+		return dist / speed;
 	}
 }

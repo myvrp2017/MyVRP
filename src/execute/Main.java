@@ -30,7 +30,7 @@ import core.ts.MyMoveManager;
 import core.ts.MyObjectiveFunction;
 import core.ts.MySolution;
 import core.ts.TestMySolution;
-import core.util.MyUltility;
+import core.util.MyUtility;
 
 
 public class Main extends JComponent{
@@ -62,7 +62,7 @@ public class Main extends JComponent{
 		long startTime = System.currentTimeMillis();
 	    // Initialize our objects
 	    VrpProblem vrp = new VrpProblem();
-	    vrp = MyUltility.readFile("c102.txt", false);//true ignore service time;
+	    vrp = MyUtility.readFile("c102.txt", false);//true ignore service time;
 	    
 	    ObjectiveFunction objFunc = new MyObjectiveFunction( vrp );
 	    Solution initialSolution  = new MySolution( vrp ,1,1,1,1,0);

@@ -13,7 +13,7 @@ import core.model.Location;
 import core.model.Route;
 import core.model.Stage;
 import core.model.VrpProblem;
-import core.util.MyUltility;
+import core.util.MyUtility;
 
 public class MySolution extends SolutionAdapter {
 
@@ -112,7 +112,7 @@ public class MySolution extends SolutionAdapter {
 				continue;
 			if (unvisited[listD.get(i).getIndex()])
 				continue;
-			trlTime = calculateTrlTime(distanceMatrix.get(listD.get(i).getIndex()), this.speed);
+			trlTime = MyUtility.calculateTravelTime(distanceMatrix.get(listD.get(i).getIndex()), this.speed);
 			arrTime = vrp.getDeliveryList().get(0).getTimewindowFrom() + trlTime;
 			if (arrTime > listD.get(i).getTimewindowTo())
 				continue;
@@ -188,10 +188,11 @@ public class MySolution extends SolutionAdapter {
 		if (currentCapacity + del_u.getDemand() > vrp.getCapacityOfVehicle())
 			return false;
 		// insert u into ij
-		double dist_iu = MyUltility.calculateDistance(tmpStage.getDepartPoint(),
+		double dist_iu = MyUtility.calculateDistance(tmpStage.getDepartPoint(),
 				vrp.getLocationOfCustomers().get(positionOfCus));
-		double trlTime_iu = calculateTrlTime(dist_iu, this.speed);
+		double trlTime_iu = MyUtility.calculateTravelTime(dist_iu, this.speed);
 		double arrTime_iu = trlTime_iu + tmpStage.getStartingTime();
+		
 		if (arrTime_iu > del_u.getTimewindowTo())
 			return false;
 		double issuingTime_iu = 0;
@@ -200,9 +201,9 @@ public class MySolution extends SolutionAdapter {
 		else
 			issuingTime_iu = arrTime_iu;
 
-		double dist_uj = MyUltility.calculateDistance(vrp.getLocationOfCustomers().get(positionOfCus),
+		double dist_uj = MyUtility.calculateDistance(vrp.getLocationOfCustomers().get(positionOfCus),
 				tmpStage.getDestinationPoint());
-		double trlTime_uj = calculateTrlTime(dist_uj, this.speed);
+		double trlTime_uj = MyUtility.calculateTravelTime(dist_uj, this.speed);
 		double arrTime_uj = trlTime_uj + issuingTime_iu + del_u.getServiceTime();
 		if (arrTime_uj > del_j.getTimewindowTo())
 			return false;
@@ -219,6 +220,7 @@ public class MySolution extends SolutionAdapter {
 				issuingTime_iu + del_u.getServiceTime(), arrTime_uj, issuingTime_uj,
 				issuingTime_uj + del_j.getServiceTime(), dist_uj, trlTime_uj,
 				tmpStage.getDistanceFromDepot() + dist_iu + dist_uj);
+		
 		// calculate time after insert u
 		double currentTotalTrlTime = issuingTime_uj + del_j.getServiceTime();
 		for (int j = positionInStage + 1; j < currentRoute.getListOfStage().size(); j++) {
@@ -245,15 +247,15 @@ public class MySolution extends SolutionAdapter {
 
 	private double calculeteProfit(Stage tmpStage, Route rseed, int positionOfCus, VrpProblem vrp, int optionProfit) {
 
-		double d_iu = MyUltility.calculateDistance(tmpStage.getDepartPoint(),
+		double d_iu = MyUtility.calculateDistance(tmpStage.getDepartPoint(),
 				vrp.getLocationOfCustomers().get(positionOfCus));
-		double d_uj = MyUltility.calculateDistance(vrp.getLocationOfCustomers().get(positionOfCus),
+		double d_uj = MyUtility.calculateDistance(vrp.getLocationOfCustomers().get(positionOfCus),
 				tmpStage.getDestinationPoint());
 		double d_ij = tmpStage.getDistance();
 
-		double t_iu = calculateTrlTime(d_iu, this.speed);
-		double t_uj = calculateTrlTime(d_uj, this.speed);
-		double t_ij = calculateTrlTime(d_ij, this.speed);
+		double t_iu = MyUtility.calculateTravelTime(d_iu, this.speed);
+		double t_uj = MyUtility.calculateTravelTime(d_uj, this.speed);
+		double t_ij = MyUtility.calculateTravelTime(d_ij, this.speed);
 
 		double c11 = d_iu + d_uj - this.u * d_ij;
 
@@ -288,9 +290,7 @@ public class MySolution extends SolutionAdapter {
 		return unvisited.length - this.visited.size() - this.exeptionList.size();
 	}
 
-	private double calculateTrlTime(double dist, float speed) {
-		return dist / speed;
-	}
+	
 
 	private ArrayList<Delivery> sortDelivery(ArrayList<Delivery> sortD, int sortparam) {
 		if (sortparam == 1) {
@@ -320,7 +320,7 @@ public class MySolution extends SolutionAdapter {
 				continue;
 			}
 			ArrayList<Double> distanceMatrix = vrp.getLocationOfCustomers().get(0).getDistanceMatrix();
-			double trlTime = calculateTrlTime(distanceMatrix.get(i), this.speed);
+			double trlTime = MyUtility.calculateTravelTime(distanceMatrix.get(i), this.speed);
 			if (trlTime > deliveryList.get(i).getTimewindowTo()) {
 				exeption.add(i);
 				continue;

@@ -1,6 +1,6 @@
 package core.model;
 
-import core.util.MyUltility;
+import core.util.MyUtility;
 
 public class Stage {
 	private Location departPoint;
@@ -24,6 +24,10 @@ public class Stage {
 	// service time consideration
 
 	private double distanceFromDepot;
+	
+	public Stage() {
+		super();
+	}
 
 	public Stage(Location departPoint, Location destinationPoint, double startingTime, double arrivingTime,
 			double issuingTime, double endTime, double distance, double travelTime, double distanceFromDepot) {
@@ -42,7 +46,7 @@ public class Stage {
 		this.departPoint = departPoint;
 		this.destinationPoint = destinationPoint;
 		this.startingTime = startingTime;
-		this.distance = MyUltility.calculateDistance(departPoint, destinationPoint);
+		this.distance = MyUtility.calculateDistance(departPoint, destinationPoint);
 		this.travelTime = calculateTravelTime(this.distance, 1);
 		this.arrivingTime = this.startingTime + this.travelTime;
 

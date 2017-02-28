@@ -17,7 +17,7 @@ import core.model.Location;
 import core.model.Route;
 import core.model.Stage;
 import core.model.VrpProblem;
-import core.util.MyUltility;
+import core.util.MyUtility;
 
 public class TestMySolution extends JComponent{
 	
@@ -66,7 +66,7 @@ public class TestMySolution extends JComponent{
 		long startTime = System.currentTimeMillis();
         // Initialize our objects
         VrpProblem vrp = new VrpProblem();//1 ignore service time;
-        vrp = MyUltility.readFile("c101.txt",true);
+        vrp = MyUtility.readFile("c101.txt",true);
         //Solution initialSolution  = new MySolution( vrp );
         MySolution initSolution  = new MySolution( vrp ,1,1,1,1,0);
         long endTime = System.currentTimeMillis();
