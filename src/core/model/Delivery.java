@@ -19,11 +19,11 @@ public class Delivery {
 		this.locationOfDepot = locationOfDepot;
 	}
 
-	public Location getLocationOfCus() {
+	public Location getLocationOfCustomer() {
 		return locationOfCustomer;
 	}
 
-	public void setLocationOfCus(Location locationOfCus) {
+	public void setLocationOfCustomer(Location locationOfCus) {
 		this.locationOfCustomer = locationOfCus;
 	}
 
@@ -70,12 +70,12 @@ public class Delivery {
 		this.serviceTime = serviceTime;
 	}
 
-	public int getIndex() {
+	public int getId() {
 		return id;
 	}
 
-	public void setIndex(int index) {
-		this.id = index;
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	/*

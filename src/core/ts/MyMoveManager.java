@@ -88,7 +88,7 @@ public class MyMoveManager implements MoveManager
 			return false;
 		//insert u into ij
 		//check constraint time
-		double dist_iu = norm(tmpStage.getDepartPoint(),this.vrp.getLocationOfCustomers().get(del_u.getIndex()));
+		double dist_iu = norm(tmpStage.getDepartPoint(),this.vrp.getLocationOfCustomers().get(del_u.getId()));
 		double trlTime_iu = calculateTrlTime(dist_iu, this.speed);
 		double arrTime_iu = trlTime_iu + tmpStage.getStartingTime();
 		if(arrTime_iu > del_u.getTimewindowTo())
@@ -99,7 +99,7 @@ public class MyMoveManager implements MoveManager
 		else
 			issuingTime_iu = arrTime_iu;
 		
-		double dist_uj = norm(this.vrp.getLocationOfCustomers().get(del_u.getIndex()),tmpStage.getDestinationPoint());
+		double dist_uj = norm(this.vrp.getLocationOfCustomers().get(del_u.getId()),tmpStage.getDestinationPoint());
 		double trlTime_uj = calculateTrlTime(dist_uj, this.speed);
 		double arrTime_uj = trlTime_uj + issuingTime_iu + del_u.getServiceTime();
 		if(arrTime_uj > del_j.getTimewindowTo())
@@ -110,10 +110,10 @@ public class MyMoveManager implements MoveManager
 		else
 			issuingTime_uj = arrTime_uj;
 		
-		Stage s_iu = new Stage(tmpStage.getDepartPoint(), this.vrp.getLocationOfCustomers().get(del_u.getIndex()), 
+		Stage s_iu = new Stage(tmpStage.getDepartPoint(), this.vrp.getLocationOfCustomers().get(del_u.getId()), 
 				tmpStage.getStartingTime(), arrTime_iu, issuingTime_iu, issuingTime_iu+del_u.getServiceTime(),
 				dist_iu, trlTime_iu, tmpStage.getDistanceFromDepot() + dist_iu);
-		Stage s_uj = new Stage(this.vrp.getLocationOfCustomers().get(del_u.getIndex()),tmpStage.getDestinationPoint() , 
+		Stage s_uj = new Stage(this.vrp.getLocationOfCustomers().get(del_u.getId()),tmpStage.getDestinationPoint() , 
 				issuingTime_iu + del_u.getServiceTime(), arrTime_uj, issuingTime_uj, issuingTime_uj+del_j.getServiceTime(),
 				dist_uj, trlTime_uj, tmpStage.getDistanceFromDepot() + dist_iu + dist_uj);
 		//calculate time after insert u
@@ -145,9 +145,9 @@ public class MyMoveManager implements MoveManager
 		Delivery del_a = rA.getListOfDelivery().get(positionOfRA-1);
 		Delivery del_c = rA.getListOfDelivery().get(positionOfRA+1);
 		Delivery del_b = rA.getListOfDelivery().get(positionOfRA);
-		double dist_ac = norm(del_a.getLocationOfCus(),del_c.getLocationOfCus());
-		double dist_ab = norm(del_a.getLocationOfCus(),del_b.getLocationOfCus());
-		double dist_bc = norm(del_b.getLocationOfCus(),del_c.getLocationOfCus());
+		double dist_ac = norm(del_a.getLocationOfCustomer(),del_c.getLocationOfCustomer());
+		double dist_ab = norm(del_a.getLocationOfCustomer(),del_b.getLocationOfCustomer());
+		double dist_bc = norm(del_b.getLocationOfCustomer(),del_c.getLocationOfCustomer());
 		double trlTime_ac = calculateTrlTime(dist_ac, this.speed);
 		double arrTime_ac = trlTime_ac + rA.getListOfStage().get(positionOfRA-1).getStartingTime();
 		if(arrTime_ac > del_c.getTimewindowTo())
@@ -157,7 +157,7 @@ public class MyMoveManager implements MoveManager
 			issuingTime_ac = del_c.getTimewindowFrom();
 		else
 			issuingTime_ac = arrTime_ac;
-		Stage s_ac = new Stage(del_a.getLocationOfCus(),del_c.getLocationOfCus(),rA.getListOfStage().get(positionOfRA-1).getStartingTime(),
+		Stage s_ac = new Stage(del_a.getLocationOfCustomer(),del_c.getLocationOfCustomer(),rA.getListOfStage().get(positionOfRA-1).getStartingTime(),
 				arrTime_ac,issuingTime_ac,issuingTime_ac + del_c.getServiceTime(),dist_ac,trlTime_ac,rA.getListOfStage().get(positionOfRA-1).getDistanceFromDepot() - dist_ab + dist_ac);
 		double currentTravelTimeRA = issuingTime_ac + del_c.getServiceTime();
 		for(int k = positionOfRA+1; k < rA.getListOfStage().size(); k++){

@@ -77,7 +77,7 @@ public class TestMySolution extends JComponent{
 	        for( int i = 0; i < initSolution.RouteList.size(); i++ ){
 	        	System.out.print("Route " + i +" : ");
 	        	for(int j = 0; j < initSolution.RouteList.get(i).getListOfDelivery().size(); j++){
-	        		System.out.print(initSolution.RouteList.get(i).getListOfDelivery().get(j).getIndex()+" - ");
+	        		System.out.print(initSolution.RouteList.get(i).getListOfDelivery().get(j).getId()+" - ");
 	        	}
 	        	System.out.print(" Total Demand: " + initSolution.RouteList.get(i).getTotalDemand());
 	        	System.out.print(" Total Distance: " + initSolution.RouteList.get(i).getTotalDistance());
@@ -100,13 +100,13 @@ public class TestMySolution extends JComponent{
 	        for(int i = 0; i < initSolution.RouteList.size(); i++){
 	        	Color randomColor = new Color((float)Math.random(), (float)Math.random(), (float)Math.random());
 	        	for(int j = 0; j < initSolution.RouteList.get(i).getListOfDelivery().size()-2; j++){
-	        		Location cus1 = vrp.getLocationOfCustomers().get(initSolution.RouteList.get(i).getListOfDelivery().get(j).getIndex());
-	        		Location cus2 = vrp.getLocationOfCustomers().get(initSolution.RouteList.get(i).getListOfDelivery().get(j+1).getIndex());
+	        		Location cus1 = vrp.getLocationOfCustomers().get(initSolution.RouteList.get(i).getListOfDelivery().get(j).getId());
+	        		Location cus2 = vrp.getLocationOfCustomers().get(initSolution.RouteList.get(i).getListOfDelivery().get(j+1).getId());
 	                int x1 = (int) cus1.getX()*7 +100;
 	                int x2 = (int) cus2.getX()*7 +100;
 	                int y1 = (int) cus1.getY()*7 +100;
 	                int y2 = (int) cus2.getY()*7 +100;
-	                comp.addLine(x1, y1, x2, y2,initSolution.RouteList.get(i).getListOfDelivery().get(j).getIndex(),initSolution.RouteList.get(i).getListOfDelivery().get(j+1).getIndex(), randomColor);
+	                comp.addLine(x1, y1, x2, y2,initSolution.RouteList.get(i).getListOfDelivery().get(j).getId(),initSolution.RouteList.get(i).getListOfDelivery().get(j+1).getId(), randomColor);
 	            }
 	        }
 	

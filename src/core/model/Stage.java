@@ -133,4 +133,14 @@ public class Stage {
 	private double calculateTravelTime(double dist, float speed) {
 		return dist / speed;
 	}
+
+	@Override
+	public String toString() {
+		return "Stage [startingTime=" + startingTime + ", arrivingTime=" + arrivingTime + ", issuingTime=" + issuingTime
+				+ ", endTime=" + endTime + ", distance=" + distance + ", travelTime=" + travelTime
+				+ ", distanceFromDepot=" + distanceFromDepot + "]\n";
+	}
+
+	
+	
 }

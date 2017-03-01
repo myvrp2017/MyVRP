@@ -106,13 +106,13 @@ public class MySolution extends SolutionAdapter {
 		double returnDepotTime = 0;
 		ArrayList<Double> distanceMatrix = vrp.getDepot().getDistanceMatrix();
 		for (i = 0; i < listD.size() ; i++) {
-			if (this.exeptionList.contains(listD.get(i).getIndex()))
+			if (this.exeptionList.contains(listD.get(i).getId()))
 				continue;
-			if (listD.get(i).getIndex() == 0)
+			if (listD.get(i).getId() == 0)
 				continue;
-			if (unvisited[listD.get(i).getIndex()])
+			if (unvisited[listD.get(i).getId()])
 				continue;
-			trlTime = MyUtility.calculateTravelTime(distanceMatrix.get(listD.get(i).getIndex()), this.speed);
+			trlTime = MyUtility.calculateTravelTime(distanceMatrix.get(listD.get(i).getId()), this.speed);
 			arrTime = vrp.getDeliveryList().get(0).getTimewindowFrom() + trlTime;
 			if (arrTime > listD.get(i).getTimewindowTo())
 				continue;
@@ -128,11 +128,11 @@ public class MySolution extends SolutionAdapter {
 		}
 		//System.out.println("i la :" + i);
 		// depot -> A -> depot
-		Stage s_OA = new Stage(vrp.getDepot(), listD.get(i).getLocationOfCus(), 0, arrTime, issuingTime, endTime,
-				distanceMatrix.get(listD.get(i).getIndex()), trlTime, distanceMatrix.get(listD.get(i).getIndex()));
-		Stage s_AO = new Stage(listD.get(i).getLocationOfCus(), vrp.getDepot(), endTime, returnDepotTime,
-				returnDepotTime, returnDepotTime, distanceMatrix.get(listD.get(i).getIndex()), trlTime,
-				2 * distanceMatrix.get(listD.get(i).getIndex()));
+		Stage s_OA = new Stage(vrp.getDepot(), listD.get(i).getLocationOfCustomer(), 0, arrTime, issuingTime, endTime,
+				distanceMatrix.get(listD.get(i).getId()), trlTime, distanceMatrix.get(listD.get(i).getId()));
+		Stage s_AO = new Stage(listD.get(i).getLocationOfCustomer(), vrp.getDepot(), endTime, returnDepotTime,
+				returnDepotTime, returnDepotTime, distanceMatrix.get(listD.get(i).getId()), trlTime,
+				2 * distanceMatrix.get(listD.get(i).getId()));
 
 		ArrayList<Delivery> list = new ArrayList<Delivery>();
 		list.add(vrp.getDeliveryList().get(0));
@@ -143,7 +143,7 @@ public class MySolution extends SolutionAdapter {
 		listOfStage.add(s_OA);
 		listOfStage.add(s_AO);
 
-		return new Route(list, listD.get(i).getDemand(), 2 * distanceMatrix.get(listD.get(i).getIndex()),
+		return new Route(list, listD.get(i).getDemand(), 2 * distanceMatrix.get(listD.get(i).getId()),
 				returnDepotTime, listOfStage);
 	}
 
@@ -283,9 +283,9 @@ public class MySolution extends SolutionAdapter {
 
 	private int updateN(boolean[] unvisited, Route rseed) {
 		for (int i = 0; i < rseed.getListOfDelivery().size(); i++) {
-			if (!visited.contains(rseed.getListOfDelivery().get(i).getIndex()))
-				visited.add(rseed.getListOfDelivery().get(i).getIndex());
-			unvisited[rseed.getListOfDelivery().get(i).getIndex()] = true;
+			if (!visited.contains(rseed.getListOfDelivery().get(i).getId()))
+				visited.add(rseed.getListOfDelivery().get(i).getId());
+			unvisited[rseed.getListOfDelivery().get(i).getId()] = true;
 		}
 		return unvisited.length - this.visited.size() - this.exeptionList.size();
 	}
@@ -345,9 +345,9 @@ public class MySolution extends SolutionAdapter {
 
 		s.append("Solution value: " + getObjectiveValue()[0]);
 		for (int i = 0; i < this.RouteList.size(); i++) {
-			s.append("Route " + i + " : [");
+			s.append("\nRoute " + i + " : [");
 			for (int j = 0; j < this.RouteList.get(i).getListOfDelivery().size(); j++) {
-				s.append(this.RouteList.get(i).getListOfDelivery().get(j).getIndex() + " , ");
+				s.append(this.RouteList.get(i).getListOfDelivery().get(j).getId() + " , ");
 			}
 			s.append(" ]");
 			s.append(" Total Demand: " + this.RouteList.get(i).getTotalDemand());

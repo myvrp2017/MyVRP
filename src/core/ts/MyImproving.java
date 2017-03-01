@@ -25,15 +25,15 @@ public class MyImproving {
 					 * 2 edge_ii is distance between i vs i+1 of route1 edge_jj
 					 * is distance between j vs j+1 of route2
 					 */
-					double edge_ij = MyUtility.calculateDistance(route1.getListOfDelivery().get(i).getLocationOfCus(),
-							route2.getListOfDelivery().get(j).getLocationOfCus());
+					double edge_ij = MyUtility.calculateDistance(route1.getListOfDelivery().get(i).getLocationOfCustomer(),
+							route2.getListOfDelivery().get(j).getLocationOfCustomer());
 					double edge_ij1 = MyUtility.calculateDistance(
-							route1.getListOfDelivery().get(i + 1).getLocationOfCus(),
-							route2.getListOfDelivery().get(j + 1).getLocationOfCus());
-					double edge_ii = MyUtility.calculateDistance(route1.getListOfDelivery().get(i).getLocationOfCus(),
-							route1.getListOfDelivery().get(i + 1).getLocationOfCus());
-					double edge_jj = MyUtility.calculateDistance(route2.getListOfDelivery().get(j).getLocationOfCus(),
-							route2.getListOfDelivery().get(j + 1).getLocationOfCus());
+							route1.getListOfDelivery().get(i + 1).getLocationOfCustomer(),
+							route2.getListOfDelivery().get(j + 1).getLocationOfCustomer());
+					double edge_ii = MyUtility.calculateDistance(route1.getListOfDelivery().get(i).getLocationOfCustomer(),
+							route1.getListOfDelivery().get(i + 1).getLocationOfCustomer());
+					double edge_jj = MyUtility.calculateDistance(route2.getListOfDelivery().get(j).getLocationOfCustomer(),
+							route2.getListOfDelivery().get(j + 1).getLocationOfCustomer());
 
 					double change = edge_ij + edge_ij1 - edge_ii - edge_jj;
 

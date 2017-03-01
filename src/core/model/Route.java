@@ -2,6 +2,8 @@ package core.model;
 
 import java.util.ArrayList;
 
+import core.util.MyUtility;
+
 public class Route {
 	private ArrayList<Delivery> listOfDelivery;
 	private double totalDemand;
@@ -83,10 +85,53 @@ public class Route {
 		String out = "TotalDemand=" + totalDemand + ", totalDistance="
 				+ totalDistance + ", totalTravelTime=" + totalTravelTime + ",\nroute :";
 		for(Delivery delivery : this.listOfDelivery){
-			out += delivery.getIndex() + "->";
+			out += delivery.getId() + "->";
 		}
 		out = out.substring(0, out.length()-2);
 		return out;
+	}
+	public void calculateStage(){
+		listOfStage.clear();
+		for(int i = 0 ; i < listOfDelivery.size() -1 ; i++){
+			Stage stage = new Stage();
+			Stage stagePrevious = new Stage();
+			// delivery1 -> delivery2
+			Delivery delivery1 = listOfDelivery.get(i);
+			Delivery delivery2 = listOfDelivery.get(i+1);
+			Location departPoint = delivery1.getLocationOfCustomer();
+			Location destinationPoint = delivery2.getLocationOfCustomer();
+			double distance = MyUtility.calculateDistance(departPoint, destinationPoint);
+			
+			double travelTime = MyUtility.calculateTravelTime(distance, 1);
+			double arrivingTime = delivery1.getTimewindowFrom() + travelTime;
+			double distanceFromDepot = MyUtility.calculateDistance(destinationPoint, delivery2.getLocationOfDepot());
+			
+			
+			double issuingTime = 0.00;
+			double startingTime = 0.00;
+			double endTime = 0.00;
+			
+			if(arrivingTime < delivery2.getTimewindowFrom())
+				issuingTime = delivery2.getTimewindowFrom();
+			else
+				issuingTime = arrivingTime;
+			endTime = issuingTime + delivery2.getServiceTime();
+			
+			int previous = i - 1;
+			if(previous < 0){
+				startingTime = 0.00;
+			}else{
+				stagePrevious = listOfStage.get(i-1);
+				startingTime = stagePrevious.getEndTime();
+				arrivingTime += startingTime;
+			}
+			
+			stage = new Stage(departPoint,destinationPoint,
+					startingTime,arrivingTime,issuingTime,endTime,distance,travelTime,distanceFromDepot);
+			listOfStage.add(stage);
+		}
+		System.out.println(this.listOfDelivery.size());
+		System.out.println(listOfStage.size());
 	}
 	
 }
