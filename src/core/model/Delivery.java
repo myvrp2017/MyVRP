@@ -27,7 +27,7 @@ public class Delivery {
 		this.locationOfCustomer = locationOfCus;
 	}
 
-	public Delivery(int id,double demand, int timewindowFrom, int timewindowTo, int serviceTime,
+	public Delivery(int id, double demand, int timewindowFrom, int timewindowTo, int serviceTime,
 			Location locationOfDepot, Location locationOfCustomer) {
 		this.demand = demand;
 		this.timewindowFrom = timewindowFrom;
@@ -36,6 +36,16 @@ public class Delivery {
 		this.id = id;
 		this.locationOfDepot = locationOfDepot;
 		this.locationOfCustomer = locationOfCustomer;
+	}
+
+	public Delivery(Delivery del) {
+		this.demand = del.getDemand();
+		this.timewindowFrom = del.getTimewindowFrom();
+		this.timewindowTo = del.getTimewindowTo();
+		this.serviceTime = del.getServiceTime();
+		this.id = del.getId();
+		this.locationOfDepot = del.getLocationOfDepot();
+		this.locationOfCustomer = del.getLocationOfCustomer();
 	}
 
 	public double getDemand() {
@@ -132,5 +142,15 @@ public class Delivery {
 			return 0;
 		}
 
+	}
+
+	public void setAttribute(Delivery del) {
+		this.demand = del.getDemand();
+		this.timewindowFrom = del.getTimewindowFrom();
+		this.timewindowTo = del.getTimewindowTo();
+		this.serviceTime = del.getServiceTime();
+		this.id = del.getId();
+		this.locationOfDepot = del.getLocationOfDepot();
+		this.locationOfCustomer = del.getLocationOfCustomer();
 	}
 }

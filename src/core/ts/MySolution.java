@@ -8,6 +8,7 @@ import java.util.List;
 import org.coinor.opents.Solution;
 import org.coinor.opents.SolutionAdapter;
 
+import core.algorithm.KOpt;
 import core.model.Delivery;
 import core.model.Location;
 import core.model.Route;
@@ -17,21 +18,24 @@ import core.util.MyUtility;
 
 public class MySolution extends SolutionAdapter {
 
-	public ArrayList<Route> RouteList;
-	public double totalDistance = 0;
-	public double totalTravelTime = 0;
-	public List<Integer> exeptionList;
-	public List<Integer> visited = new ArrayList<Integer>();
-	float lamda;
-	float u;
-	float alpha1;
-	float alpha2;
-	float speed = 1;
+	private ArrayList<Route> RouteList;
+	private double totalDistance = 0;
+	private double totalTravelTime = 0;
+	private List<Integer> exeptionList;
+	private List<Integer> visited = new ArrayList<Integer>();
+	private float lamda;
+	private float u;
+	private float alpha1;
+	private float alpha2;
+	private float speed = 1;
+	private VrpProblem vrpProblem;
 
 	public MySolution() {
 	}
 
 	public MySolution(VrpProblem vrp, int sortparam, float u, float lamda, float alpha1, float alpha2) {
+		this.vrpProblem = vrp;
+
 		this.seedInsertion(vrp, sortparam, lamda, u, alpha1, alpha2);
 		calculateDistanceAndTravelTime();
 	}
@@ -48,7 +52,7 @@ public class MySolution extends SolutionAdapter {
 		copy.RouteList = (ArrayList<Route>) this.RouteList.clone();
 		return copy;
 	} // end clone
-
+	
 	public void seedInsertion(VrpProblem vrp, int sortparam, float lamda, float u, float alpha1, float alpha2) {
 
 		this.alpha1 = alpha1;
@@ -105,7 +109,7 @@ public class MySolution extends SolutionAdapter {
 		double endTime = 0;
 		double returnDepotTime = 0;
 		ArrayList<Double> distanceMatrix = vrp.getDepot().getDistanceMatrix();
-		for (i = 0; i < listD.size() ; i++) {
+		for (i = 0; i < listD.size(); i++) {
 			if (this.exeptionList.contains(listD.get(i).getId()))
 				continue;
 			if (listD.get(i).getId() == 0)
@@ -126,7 +130,7 @@ public class MySolution extends SolutionAdapter {
 				continue;
 			break;
 		}
-		//System.out.println("i la :" + i);
+		// System.out.println("i la :" + i);
 		// depot -> A -> depot
 		Stage s_OA = new Stage(vrp.getDepot(), listD.get(i).getLocationOfCustomer(), 0, arrTime, issuingTime, endTime,
 				distanceMatrix.get(listD.get(i).getId()), trlTime, distanceMatrix.get(listD.get(i).getId()));
@@ -143,8 +147,8 @@ public class MySolution extends SolutionAdapter {
 		listOfStage.add(s_OA);
 		listOfStage.add(s_AO);
 
-		return new Route(list, listD.get(i).getDemand(), 2 * distanceMatrix.get(listD.get(i).getId()),
-				returnDepotTime, listOfStage);
+		return new Route(list, listD.get(i).getDemand(), 2 * distanceMatrix.get(listD.get(i).getId()), returnDepotTime,
+				listOfStage);
 	}
 
 	private int findCustomerAndUpdateSeed(boolean[] unvisited, Route rseed, VrpProblem vrp) {
@@ -173,7 +177,7 @@ public class MySolution extends SolutionAdapter {
 			tmp = p.get(0);
 			uStar = tmp.getuStar();
 			rseed.setAttribute(tmp.getUpdateRoute());
-			//System.out.println(rseed);
+			// System.out.println(rseed);
 		}
 		return uStar;
 	}
@@ -192,7 +196,7 @@ public class MySolution extends SolutionAdapter {
 				vrp.getLocationOfCustomers().get(positionOfCus));
 		double trlTime_iu = MyUtility.calculateTravelTime(dist_iu, this.speed);
 		double arrTime_iu = trlTime_iu + tmpStage.getStartingTime();
-		
+
 		if (arrTime_iu > del_u.getTimewindowTo())
 			return false;
 		double issuingTime_iu = 0;
@@ -220,7 +224,7 @@ public class MySolution extends SolutionAdapter {
 				issuingTime_iu + del_u.getServiceTime(), arrTime_uj, issuingTime_uj,
 				issuingTime_uj + del_j.getServiceTime(), dist_uj, trlTime_uj,
 				tmpStage.getDistanceFromDepot() + dist_iu + dist_uj);
-		
+
 		// calculate time after insert u
 		double currentTotalTrlTime = issuingTime_uj + del_j.getServiceTime();
 		for (int j = positionInStage + 1; j < currentRoute.getListOfStage().size(); j++) {
@@ -290,8 +294,6 @@ public class MySolution extends SolutionAdapter {
 		return unvisited.length - this.visited.size() - this.exeptionList.size();
 	}
 
-	
-
 	private ArrayList<Delivery> sortDelivery(ArrayList<Delivery> sortD, int sortparam) {
 		if (sortparam == 1) {
 			Comparator<Delivery> c = Delivery.getComparator(Delivery.SortParameter.DEMAND_DESC,
@@ -342,54 +344,122 @@ public class MySolution extends SolutionAdapter {
 
 	public String toString() {
 		StringBuffer s = new StringBuffer();
-
-		s.append("Solution value: " + getObjectiveValue()[0]);
+		this.totalDistance = 0.00;
+		this.totalTravelTime = 0.00;
+		
+		//s.append("Solution value: " + getObjectiveValue()[0]);
 		for (int i = 0; i < this.RouteList.size(); i++) {
 			s.append("\nRoute " + i + " : [");
 			for (int j = 0; j < this.RouteList.get(i).getListOfDelivery().size(); j++) {
 				s.append(this.RouteList.get(i).getListOfDelivery().get(j).getId() + " , ");
 			}
-			s.append(" ]");
+			s.append(" ]\n");
 			s.append(" Total Demand: " + this.RouteList.get(i).getTotalDemand());
 			s.append(" Total Distance: " + this.RouteList.get(i).getTotalDistance());
 			s.append(" Total TravelTime: " + this.RouteList.get(i).getTotalTravelTime());
 			this.totalDistance += this.RouteList.get(i).getTotalDistance();
 			this.totalTravelTime += this.RouteList.get(i).getTotalTravelTime();
 		}
-		s.append("Total Route :" + this.RouteList.size());
-		s.append("Total TravelTime: " + this.totalTravelTime);
-		s.append("Total Distance: " + this.totalDistance);
+		s.append("\nTotal Route :" + this.RouteList.size());
+		s.append("\nTotal TravelTime: " + this.totalTravelTime);
+		s.append("\nTotal Distance: " + this.totalDistance);
 		return s.toString();
 	} // end toString
+
+	public ArrayList<Route> getRouteList() {
+		return RouteList;
+	}
+
+	public void setRouteList(ArrayList<Route> routeList) {
+		RouteList = routeList;
+	}
+
+	public double getTotalDistance() {
+		return totalDistance;
+	}
+
+	public void setTotalDistance(double totalDistance) {
+		this.totalDistance = totalDistance;
+	}
+
+	public double getTotalTravelTime() {
+		return totalTravelTime;
+	}
+
+	public void setTotalTravelTime(double totalTravelTime) {
+		this.totalTravelTime = totalTravelTime;
+	}
+
+	public List<Integer> getExeptionList() {
+		return exeptionList;
+	}
+
+	public void setExeptionList(List<Integer> exeptionList) {
+		this.exeptionList = exeptionList;
+	}
+
+	public List<Integer> getVisited() {
+		return visited;
+	}
+
+	public void setVisited(List<Integer> visited) {
+		this.visited = visited;
+	}
+
+	public float getLamda() {
+		return lamda;
+	}
+
+	public void setLamda(float lamda) {
+		this.lamda = lamda;
+	}
+
+	public float getU() {
+		return u;
+	}
+
+	public void setU(float u) {
+		this.u = u;
+	}
+
+	public float getAlpha1() {
+		return alpha1;
+	}
+
+	public void setAlpha1(float alpha1) {
+		this.alpha1 = alpha1;
+	}
+
+	public float getAlpha2() {
+		return alpha2;
+	}
+
+	public void setAlpha2(float alpha2) {
+		this.alpha2 = alpha2;
+	}
+
+	public float getSpeed() {
+		return speed;
+	}
+
+	public void setSpeed(float speed) {
+		this.speed = speed;
+	}
+	
+
+	public VrpProblem getVrpProblem() {
+		return vrpProblem;
+	}
+
+	public void setVrpProblem(VrpProblem vrpProblem) {
+		this.vrpProblem = vrpProblem;
+	}
 
 	/*
 	 * PhatNguyen
 	 */
-	public void repairSolution() {
-		/*
-		 * Solution feasibleSolution = this.feasibleSolution;
-		 * 
-		 * ArrayList<Route> routes = feasibleSolution.getRoutes(); int
-		 * numOfRoute = routes.size();
-		 * 
-		 * ArrayList<Route> newRoutes = new ArrayList<Route>();
-		 * 
-		 * for (int k = 0; k < 1000; k++) { for (int i = 0; i < numOfRoute - 1;
-		 * i++) { for (int j = i + 1; j < numOfRoute; j++) { //
-		 * newRoutes.addAll(twoOpt(routes.get(i),routes.get(j))); // change =
-		 * MyUltility.getDistance(routes.get(i), // routes.get(j)) + dist(i + 1,
-		 * j + 1) - dist(i, i + 1) - // dist(j, j + 1); twoOpt(routes.get(i),
-		 * routes.get(j)); } } }
-		 * 
-		 * for (int i = 0; i < feasibleSolution.getRoutes().size(); i++) {
-		 * if(routes.get(i).sizeofRoute() == 1){
-		 * feasibleSolution.getRoutes().remove(i); }else{ continue; } }
-		 * 
-		 * 
-		 * for (Route route : feasibleSolution.getRoutes()) { if
-		 * (route.sizeofRoute() == 1) { continue; } else { newRoutes.add(route);
-		 * } } feasibleSolution.setRoutes(newRoutes);
-		 */
+	public void improveSolution() {
+		KOpt.twoOptAlgorithmInter(this);
 	}
 
 } // end class MySolution

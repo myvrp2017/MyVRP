@@ -62,12 +62,19 @@ public class Main extends JComponent{
 		long startTime = System.currentTimeMillis();
 	    // Initialize our objects
 	    VrpProblem vrp = new VrpProblem();
-	    vrp = MyUtility.readFile("c102.txt", false);//true ignore service time;
+	    vrp = MyUtility.readFile("rc101.txt", false);//true ignore service time;
 	    
 	    ObjectiveFunction objFunc = new MyObjectiveFunction( vrp );
-	    Solution initialSolution  = new MySolution( vrp ,1,1,1,1,0);
+	    MySolution initialSolution  = new MySolution( vrp ,1,1,1,1,0);
+	    
+	    //improve
+	    initialSolution.improveSolution();
+	    
+	 /*   
 	    MoveManager   moveManager = new MyMoveManager(vrp);
 	    TabuList         tabuList = new SimpleTabuList( 7 ); // In OpenTS package
+	    
+	    
 	    
 	    // Create Tabu Search object
 	    TabuSearch tabuSearch = new SingleThreadedTabuSearch(
@@ -85,23 +92,28 @@ public class Main extends JComponent{
 	    // Show solution
 	    MySolution best = (MySolution)tabuSearch.getBestSolution();
 	    
+	    */
+	    
+	    long endTime = System.currentTimeMillis();
+	    MySolution best = new MySolution(initialSolution);
+	    
 	    if(checkSolution(best, vrp)){
 	        double totalDistance = 0;
 	        double totalTravelTime = 0;
 	        System.out.println("Best solution:");
-	        for( int i = 0; i < best.RouteList.size(); i++ ){
+	        for( int i = 0; i < best.getRouteList().size(); i++ ){
 	        	System.out.print("Route " + i +" : ");
-	        	for(int j = 0; j < best.RouteList.get(i).getListOfDelivery().size(); j++){
-	        		System.out.print(best.RouteList.get(i).getListOfDelivery().get(j).getId()+" - ");
+	        	for(int j = 0; j < best.getRouteList().get(i).getListOfDelivery().size(); j++){
+	        		System.out.print(best.getRouteList().get(i).getListOfDelivery().get(j).getId()+" - ");
 	        	}
-	        	System.out.print(" Total Demand: " + best.RouteList.get(i).getTotalDemand());
-	        	System.out.print(" Total Distance: " + best.RouteList.get(i).getTotalDistance());
-	        	System.out.print(" Total TravelTime: " + best.RouteList.get(i).getTotalTravelTime());
-	        	totalDistance += best.RouteList.get(i).getTotalDistance();
-	        	totalTravelTime += best.RouteList.get(i).getTotalTravelTime();
+	        	System.out.print(" Total Demand: " + best.getRouteList().get(i).getTotalDemand());
+	        	System.out.print(" Total Distance: " + best.getRouteList().get(i).getTotalDistance());
+	        	System.out.print(" Total TravelTime: " + best.getRouteList().get(i).getTotalTravelTime());
+	        	totalDistance += best.getRouteList().get(i).getTotalDistance();
+	        	totalTravelTime += best.getRouteList().get(i).getTotalTravelTime();
 	        	System.out.println("");
 	        }
-	        System.out.println(best.RouteList.size());
+	        System.out.println(best.getRouteList().size());
 	        System.out.println(totalTravelTime);
 	        System.out.println(totalDistance);
 	        System.out.println((endTime - startTime));
@@ -112,16 +124,16 @@ public class Main extends JComponent{
 	        comp.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 	        testFrame.getContentPane().add(comp, BorderLayout.CENTER);
 	        
-	        for(int i = 0; i < best.RouteList.size(); i++){
+	        for(int i = 0; i < best.getRouteList().size(); i++){
 	        	Color randomColor = new Color((float)Math.random(), (float)Math.random(), (float)Math.random());
-	        	for(int j = 0; j < best.RouteList.get(i).getListOfDelivery().size()-2; j++){
-	        		Location cus1 = vrp.getLocationOfCustomers().get(best.RouteList.get(i).getListOfDelivery().get(j).getId());
-	        		Location cus2 = vrp.getLocationOfCustomers().get(best.RouteList.get(i).getListOfDelivery().get(j+1).getId());
+	        	for(int j = 0; j < best.getRouteList().get(i).getListOfDelivery().size()-2; j++){
+	        		Location cus1 = vrp.getLocationOfCustomers().get(best.getRouteList().get(i).getListOfDelivery().get(j).getId());
+	        		Location cus2 = vrp.getLocationOfCustomers().get(best.getRouteList().get(i).getListOfDelivery().get(j+1).getId());
 	                int x1 = (int) cus1.getX()*7 +100;
 	                int x2 = (int) cus2.getX()*7 +100;
 	                int y1 = (int) cus1.getY()*7 +100;
 	                int y2 = (int) cus2.getY()*7 +100;
-	                comp.addLine(x1, y1, x2, y2,best.RouteList.get(i).getListOfDelivery().get(j).getId(),best.RouteList.get(i).getListOfDelivery().get(j+1).getId(), randomColor);
+	                comp.addLine(x1, y1, x2, y2,best.getRouteList().get(i).getListOfDelivery().get(j).getId(),best.getRouteList().get(i).getListOfDelivery().get(j+1).getId(), randomColor);
 	            }
 	        }
 	
@@ -129,17 +141,17 @@ public class Main extends JComponent{
 	        testFrame.setVisible(true);
 	    }
 	    System.out.println("stage of r0");
-	    System.out.println(best.RouteList.get(0).getListOfStage());
-	    best.RouteList.get(0).calculateStage();
+	    System.out.println(best.getRouteList().get(0).getListOfStage());
+	    best.getRouteList().get(0).calculateStage();
 	    
 	    System.out.println("calculate stage of r0");
-	    System.out.println(best.RouteList.get(0).getListOfStage());
+	    System.out.println(best.getRouteList().get(0).getListOfStage());
 	    
 	}// end main
 	private final LinkedList<Line> lines = new LinkedList<Line>();
 
 	public static boolean checkSolution(MySolution soln, VrpProblem vrp){
-		ArrayList<Route> routes = soln.RouteList;
+		ArrayList<Route> routes = soln.getRouteList();
 		for(int i = 0; i < routes.size(); i++){
 			if(routes.get(i).getTotalDemand() > vrp.getCapacityOfVehicle()){
 				System.out.println("Route "+ i +" out of capacity of vehicle");

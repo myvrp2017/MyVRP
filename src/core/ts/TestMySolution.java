@@ -74,19 +74,19 @@ public class TestMySolution extends JComponent{
 	        double totalDistance = 0;
 	        double totalTravelTime = 0;
 	        System.out.println("initialize solution:");
-	        for( int i = 0; i < initSolution.RouteList.size(); i++ ){
+	        for( int i = 0; i < initSolution.getRouteList().size(); i++ ){
 	        	System.out.print("Route " + i +" : ");
-	        	for(int j = 0; j < initSolution.RouteList.get(i).getListOfDelivery().size(); j++){
-	        		System.out.print(initSolution.RouteList.get(i).getListOfDelivery().get(j).getId()+" - ");
+	        	for(int j = 0; j < initSolution.getRouteList().get(i).getListOfDelivery().size(); j++){
+	        		System.out.print(initSolution.getRouteList().get(i).getListOfDelivery().get(j).getId()+" - ");
 	        	}
-	        	System.out.print(" Total Demand: " + initSolution.RouteList.get(i).getTotalDemand());
-	        	System.out.print(" Total Distance: " + initSolution.RouteList.get(i).getTotalDistance());
-	        	System.out.print(" Total TravelTime: " + initSolution.RouteList.get(i).getTotalTravelTime());
-	        	totalDistance += initSolution.RouteList.get(i).getTotalDistance();
-	        	totalTravelTime += initSolution.RouteList.get(i).getTotalTravelTime();
+	        	System.out.print(" Total Demand: " + initSolution.getRouteList().get(i).getTotalDemand());
+	        	System.out.print(" Total Distance: " + initSolution.getRouteList().get(i).getTotalDistance());
+	        	System.out.print(" Total TravelTime: " + initSolution.getRouteList().get(i).getTotalTravelTime());
+	        	totalDistance += initSolution.getRouteList().get(i).getTotalDistance();
+	        	totalTravelTime += initSolution.getRouteList().get(i).getTotalTravelTime();
 	        	System.out.println("");
 	        }
-	        System.out.println("Total Route :"+initSolution.RouteList.size());
+	        System.out.println("Total Route :"+initSolution.getRouteList().size());
 	        System.out.println("Total TravelTime: " + totalTravelTime);
 	        System.out.println("Total Distance: " + totalDistance);
 	        System.out.println("Execute Time: "+(endTime - startTime));
@@ -97,16 +97,16 @@ public class TestMySolution extends JComponent{
 	        comp.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 	        testFrame.getContentPane().add(comp, BorderLayout.CENTER);
 	        
-	        for(int i = 0; i < initSolution.RouteList.size(); i++){
+	        for(int i = 0; i < initSolution.getRouteList().size(); i++){
 	        	Color randomColor = new Color((float)Math.random(), (float)Math.random(), (float)Math.random());
-	        	for(int j = 0; j < initSolution.RouteList.get(i).getListOfDelivery().size()-2; j++){
-	        		Location cus1 = vrp.getLocationOfCustomers().get(initSolution.RouteList.get(i).getListOfDelivery().get(j).getId());
-	        		Location cus2 = vrp.getLocationOfCustomers().get(initSolution.RouteList.get(i).getListOfDelivery().get(j+1).getId());
+	        	for(int j = 0; j < initSolution.getRouteList().get(i).getListOfDelivery().size()-2; j++){
+	        		Location cus1 = vrp.getLocationOfCustomers().get(initSolution.getRouteList().get(i).getListOfDelivery().get(j).getId());
+	        		Location cus2 = vrp.getLocationOfCustomers().get(initSolution.getRouteList().get(i).getListOfDelivery().get(j+1).getId());
 	                int x1 = (int) cus1.getX()*7 +100;
 	                int x2 = (int) cus2.getX()*7 +100;
 	                int y1 = (int) cus1.getY()*7 +100;
 	                int y2 = (int) cus2.getY()*7 +100;
-	                comp.addLine(x1, y1, x2, y2,initSolution.RouteList.get(i).getListOfDelivery().get(j).getId(),initSolution.RouteList.get(i).getListOfDelivery().get(j+1).getId(), randomColor);
+	                comp.addLine(x1, y1, x2, y2,initSolution.getRouteList().get(i).getListOfDelivery().get(j).getId(),initSolution.getRouteList().get(i).getListOfDelivery().get(j+1).getId(), randomColor);
 	            }
 	        }
 	
@@ -116,7 +116,7 @@ public class TestMySolution extends JComponent{
         
     }
 	public static boolean checkSolution(MySolution soln, VrpProblem vrp){
-		ArrayList<Route> routes = soln.RouteList;
+		ArrayList<Route> routes = soln.getRouteList();
 		for(int i = 0; i < routes.size(); i++){
 			if(routes.get(i).getTotalDemand() > vrp.getCapacityOfVehicle()){
 				System.out.println("Route "+ i +" out of capacity of vehicle");

@@ -31,7 +31,7 @@ public class MyMoveManager implements MoveManager
 	private ArrayList<Move> doGetAllMoves(MySolution solution) {
 		MySolution tmpSoln = new MySolution(solution);
 		ArrayList<Move> listMove = new ArrayList<>();
-		ArrayList<Route> listRoute = tmpSoln.RouteList;
+		ArrayList<Route> listRoute = (ArrayList<Route>) tmpSoln.getRouteList().clone();
 		
 		for(int i = 0; i < listRoute.size(); i++){
 			Random rd = new Random();
@@ -47,7 +47,7 @@ public class MyMoveManager implements MoveManager
 					
 					ArrayList listCandidate = getListCandidate(rA,rB);
 					for(int k = 0; k < listCandidate.size(); k++){
-						ArrayList candidate = (ArrayList) listCandidate.get(k);
+						ArrayList<?> candidate = (ArrayList) listCandidate.get(k);
 						listMove.add(new MySwapMove((Route)candidate.get(0), (Route) candidate.get(1), i,
 								indexB, (Route)candidate.get(2), (Route)candidate.get(3)));
 					}

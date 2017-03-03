@@ -24,7 +24,7 @@ public class MyObjectiveFunction implements ObjectiveFunction
         // If move is null, calculate distance from scratch
         if( move == null )
         {
-            return new double[]{ soln.totalDistance };
+            return new double[]{ soln.getTotalDistance() };
         }   // end if: move == null
 
         // Else calculate incrementally
@@ -33,13 +33,13 @@ public class MyObjectiveFunction implements ObjectiveFunction
         	MySwapMove mv = (MySwapMove)move;
         	MySolution tmp = new MySolution(soln);
         	
-        	tmp.RouteList.remove(mv.indexA);
-        	tmp.RouteList.add(mv.indexA,mv.updateRouteA);
-        	tmp.RouteList.remove(mv.indexB);
-        	tmp.RouteList.add(mv.indexB,mv.updateRouteB);
+        	tmp.getRouteList().remove(mv.indexA);
+        	tmp.getRouteList().add(mv.indexA,mv.updateRouteA);
+        	tmp.getRouteList().remove(mv.indexB);
+        	tmp.getRouteList().add(mv.indexB,mv.updateRouteB);
         	
         	tmp.calculateDistanceAndTravelTime();
-        	return new double[]{tmp.totalDistance};
+        	return new double[]{tmp.getTotalDistance()};
         }   // end else: calculate incremental
     }   // end evaluate
 

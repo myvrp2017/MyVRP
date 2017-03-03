@@ -35,10 +35,10 @@ public class MySwapMove implements Move
 	public void operateOn( Solution solution )
     {
         MySolution soln = (MySolution) solution;
-        soln.RouteList.remove(indexA);
-        soln.RouteList.add(indexA,updateRouteA);
-        soln.RouteList.remove(indexB);
-        soln.RouteList.add(indexB,updateRouteB);
+        soln.getRouteList().remove(indexA);
+        soln.getRouteList().add(indexA,updateRouteA);
+        soln.getRouteList().remove(indexB);
+        soln.getRouteList().add(indexB,updateRouteB);
         soln.calculateDistanceAndTravelTime();
     }   // end operateOn
     
